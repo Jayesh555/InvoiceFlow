@@ -82,6 +82,9 @@ export interface InvoiceItem {
   medicineId: string;
   medicineName: string;
   category: MedicineCategory;
+  manufacturer: string;
+  batchNo: string;
+  expiry: string; // MM/YY format
   quantity: number;
   price: number;
   total: number;
@@ -91,6 +94,9 @@ export const invoiceItemSchema = z.object({
   medicineId: z.string(),
   medicineName: z.string(),
   category: z.enum(medicineCategories),
+  manufacturer: z.string(),
+  batchNo: z.string(),
+  expiry: z.string(), // MM/YY format
   quantity: z.number().min(1),
   price: z.number().min(0),
   total: z.number().min(0),

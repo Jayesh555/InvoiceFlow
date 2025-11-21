@@ -79,6 +79,8 @@ export default function CreateInvoicePage({
 
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
   const [quantity, setQuantity] = useState("1");
+  const [batchNo, setBatchNo] = useState("");
+  const [expiry, setExpiry] = useState("");
 
   const watchedItems = form.watch("items");
   
@@ -95,23 +97,30 @@ export default function CreateInvoicePage({
 
   const handleAddMedicine = () => {
     const qty = parseInt(quantity) || 1;
-    if (selectedMedicineId && qty > 0) {
+    if (selectedMedicineId && qty > 0 && batchNo && expiry) {
       append({
         medicineId: selectedMedicineId,
         quantity: qty,
+        batchNo,
+        expiry,
       });
       setSelectedMedicineId("");
       setQuantity("1");
+      setBatchNo("");
+      setExpiry("");
     }
   };
 
   const handleSubmit = async (data: CreateInvoiceForm) => {
-    const invoiceItems: InvoiceItem[] = data.items.map((item) => {
+    const invoiceItems: InvoiceItem[] = data.items.map((item: any) => {
       const medicine = medicines.find((m) => m.id === item.medicineId)!;
       return {
         medicineId: medicine.id,
         medicineName: medicine.name,
         category: medicine.category,
+        manufacturer: medicine.manufacturerName || "",
+        batchNo: item.batchNo,
+        expiry: item.expiry,
         quantity: item.quantity,
         price: medicine.price,
         total: medicine.price * item.quantity,
@@ -221,8 +230,8 @@ export default function CreateInvoicePage({
                   <CardTitle>Add Medicines</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex gap-4">
-                    <div className="flex-1">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                    <div className="lg:col-span-2">
                       <Select
                         value={selectedMedicineId}
                         onValueChange={setSelectedMedicineId}
@@ -233,13 +242,38 @@ export default function CreateInvoicePage({
                         <SelectContent>
                           {medicines.map((medicine) => (
                             <SelectItem key={medicine.id} value={medicine.id}>
-                              {medicine.name} - ${medicine.price.toFixed(2)}
+                              {medicine.name} - ₹{medicine.price.toFixed(2)}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="w-24">
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="Batch No."
+                        value={batchNo}
+                        onChange={(e) => setBatchNo(e.target.value)}
+                        data-testid="input-batch-no"
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        type="text"
+                        placeholder="Exp. (MM/YY)"
+                        value={expiry}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, "");
+                          if (val.length >= 2) {
+                            val = val.slice(0, 2) + "/" + val.slice(2, 4);
+                          }
+                          setExpiry(val);
+                        }}
+                        maxLength="5"
+                        data-testid="input-expiry"
+                      />
+                    </div>
+                    <div className="w-full">
                       <Input
                         type="number"
                         min="1"
@@ -252,8 +286,9 @@ export default function CreateInvoicePage({
                     <Button
                       type="button"
                       onClick={handleAddMedicine}
-                      disabled={!selectedMedicineId}
+                      disabled={!selectedMedicineId || !batchNo || !expiry}
                       data-testid="button-add-medicine"
+                      className="w-full"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add
@@ -267,14 +302,17 @@ export default function CreateInvoicePage({
                           <TableRow>
                             <TableHead>Medicine</TableHead>
                             <TableHead>Category</TableHead>
+                            <TableHead>Manufacturer</TableHead>
+                            <TableHead>Batch No.</TableHead>
+                            <TableHead>Exp.</TableHead>
                             <TableHead className="text-right">Qty</TableHead>
-                            <TableHead className="text-right">Price</TableHead>
+                            <TableHead className="text-right">Rate</TableHead>
                             <TableHead className="text-right">Total</TableHead>
                             <TableHead className="text-right">Action</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {fields.map((field, index) => {
+                          {fields.map((field: any, index) => {
                             const medicine = medicines.find(
                               (m) => m.id === field.medicineId
                             );
@@ -288,12 +326,17 @@ export default function CreateInvoicePage({
                                 <TableCell>
                                   <Badge variant="outline">{medicine.category}</Badge>
                                 </TableCell>
+                                <TableCell className="text-sm">
+                                  {medicine.manufacturerName || "-"}
+                                </TableCell>
+                                <TableCell className="text-sm font-mono">{field.batchNo}</TableCell>
+                                <TableCell className="text-sm font-mono">{field.expiry}</TableCell>
                                 <TableCell className="text-right">{field.quantity}</TableCell>
                                 <TableCell className="text-right font-mono">
-                                  ${medicine.price.toFixed(2)}
+                                  ₹{medicine.price.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="text-right font-mono">
-                                  ${itemTotal.toFixed(2)}
+                                  ₹{itemTotal.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="text-right">
                                   <Button
@@ -332,7 +375,7 @@ export default function CreateInvoicePage({
                     <div className="flex justify-between text-lg font-semibold pt-2">
                       <span>Total</span>
                       <span className="font-mono" data-testid="text-total">
-                        ${calculateTotal().toFixed(2)}
+                        ₹{calculateTotal().toFixed(2)}
                       </span>
                     </div>
                   </div>

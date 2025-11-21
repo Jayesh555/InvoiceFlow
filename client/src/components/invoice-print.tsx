@@ -77,30 +77,32 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
             <h3 className="text-sm font-semibold text-gray-600 uppercase mb-3">
               Prescribed Medicines
             </h3>
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse text-xs">
               <thead>
                 <tr className="border-b-2 border-black">
-                  <th className="text-left py-2 text-sm font-semibold">Medicine Name</th>
-                  <th className="text-center py-2 text-sm font-semibold">Category</th>
-                  <th className="text-center py-2 text-sm font-semibold">Quantity</th>
-                  <th className="text-right py-2 text-sm font-semibold">Price</th>
-                  <th className="text-right py-2 text-sm font-semibold">Total</th>
+                  <th className="text-left py-2 text-xs font-semibold">Product Name</th>
+                  <th className="text-center py-2 text-xs font-semibold">Category</th>
+                  <th className="text-center py-2 text-xs font-semibold">Manufacturer</th>
+                  <th className="text-center py-2 text-xs font-semibold">Batch No.</th>
+                  <th className="text-center py-2 text-xs font-semibold">Exp.</th>
+                  <th className="text-right py-2 text-xs font-semibold">Qty</th>
+                  <th className="text-right py-2 text-xs font-semibold">Rate</th>
+                  <th className="text-right py-2 text-xs font-semibold">Total</th>
                 </tr>
               </thead>
               <tbody>
-                {invoice.items.map((item, index) => (
+                {invoice.items.map((item: any, index) => (
                   <tr key={index} className="border-b border-gray-200">
-                    <td className="py-3 text-sm">{item.medicineName}</td>
-                    <td className="py-3 text-sm text-center">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs font-semibold">
-                        {item.category}
-                      </span>
-                    </td>
-                    <td className="py-3 text-sm text-center">{item.quantity}</td>
-                    <td className="py-3 text-sm text-right font-mono">
+                    <td className="py-2 text-xs">{item.medicineName}</td>
+                    <td className="py-2 text-xs text-center">{item.category}</td>
+                    <td className="py-2 text-xs text-center">{item.manufacturer || "-"}</td>
+                    <td className="py-2 text-xs text-center font-mono">{item.batchNo || "-"}</td>
+                    <td className="py-2 text-xs text-center font-mono">{item.expiry || "-"}</td>
+                    <td className="py-2 text-xs text-center">{item.quantity}</td>
+                    <td className="py-2 text-xs text-right font-mono">
                       ₹{item.price.toFixed(2)}
                     </td>
-                    <td className="py-3 text-sm text-right font-mono">
+                    <td className="py-2 text-xs text-right font-mono">
                       ₹{item.total.toFixed(2)}
                     </td>
                   </tr>
