@@ -227,6 +227,10 @@ export async function addInvoice(
   doctorData: Doctor
 ): Promise<Invoice> {
   const db = getDb();
+  if (!db) {
+    throw new Error("Firebase Firestore is not initialized. Please check your Firebase configuration.");
+  }
+  
   const subtotal = data.items.reduce((sum: number, item: any) => sum + item.total, 0);
   
   const invoiceData = {
@@ -246,12 +250,25 @@ export async function addInvoice(
     createdAt: Timestamp.now().toMillis(),
   };
 
-  const docRef = await addDoc(collection(db, COLLECTIONS.INVOICES), invoiceData);
-  
-  return {
-    id: docRef.id,
-    ...invoiceData,
-  };
+  console.log("Attempting to save invoice to Firestore:", invoiceData);
+  try {
+    const docRef = await addDoc(collection(db, COLLECTIONS.INVOICES), invoiceData);
+    console.log("Invoice saved successfully with ID:", docRef.id);
+    
+    return {
+      id: docRef.id,
+      ...invoiceData,
+    };
+  } catch (error: any) {
+    console.error("Firestore write error:", error);
+    if (error.code === "permission-denied") {
+      throw new Error(
+        "Permission denied! Your Firebase Firestore security rules don't allow writes. " +
+        "Go to Firebase Console → Firestore → Rules and update them to allow authenticated users to read/write."
+      );
+    }
+    throw error;
+  }
 }
 
 export function subscribeToInvoices(

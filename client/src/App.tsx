@@ -344,14 +344,18 @@ function Router() {
         throw new Error("Client or Doctor not found");
       }
 
-      await firebaseServices.addInvoice(data, client, doctor);
-      toast({ title: "Success", description: "Invoice created successfully" });
+      console.log("Creating invoice with data:", data);
+      const result = await firebaseServices.addInvoice(data, client, doctor);
+      console.log("Invoice created successfully:", result);
+      toast({ title: "Success", description: "Invoice created and saved to Firebase" });
       setLocation("/invoices");
     } catch (error: any) {
       console.error("Error creating invoice:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
       toast({
         title: "Error",
-        description: error.message || "Failed to create invoice",
+        description: error.message || "Failed to create invoice. Check Firebase permissions.",
         variant: "destructive",
       });
     } finally {
