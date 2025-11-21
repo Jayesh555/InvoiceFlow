@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { auth, googleProvider } from "@/lib/firebase";
+import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import {
   signInWithRedirect,
   getRedirectResult,
@@ -27,6 +27,7 @@ import ManufacturersPage from "@/pages/manufacturers";
 import InvoicesPage from "@/pages/invoices";
 import CreateInvoicePage from "@/pages/create-invoice";
 import ViewInvoicePage from "@/pages/view-invoice";
+import SetupPage from "@/pages/setup";
 import NotFound from "@/pages/not-found";
 
 // Firebase services
@@ -59,34 +60,51 @@ function Router() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
+  // Check if Firebase is configured
+  const firebaseConfigured = isFirebaseConfigured();
+  const auth = getFirebaseAuth();
+
   useEffect(() => {
-    // Check for redirect result on mount
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          toast({
-            title: "Welcome back!",
-            description: `Signed in as ${result.user.email}`,
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Sign in error:", error);
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive",
+    if (!firebaseConfigured || !auth) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Check for redirect result on mount
+      getRedirectResult(auth)
+        .then((result) => {
+          if (result?.user) {
+            toast({
+              title: "Welcome back!",
+              description: `Signed in as ${result.user.email}`,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Sign in error:", error);
+          // Don't show error if it's a normal redirect result check
+          if (error?.code !== "auth/operation-not-supported-in-this-environment") {
+            toast({
+              title: "Sign in failed",
+              description: error.message,
+              variant: "destructive",
+            });
+          }
         });
+
+      // Listen for auth state changes
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setUser(user);
+        setLoading(false);
       });
 
-    // Listen for auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Auth setup error:", error);
       setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [toast]);
+    }
+  }, [toast, firebaseConfigured, auth]);
 
   // Subscribe to Firebase collections when user is authenticated
   useEffect(() => {
@@ -110,6 +128,14 @@ function Router() {
   }, [user]);
 
   const handleLogin = async () => {
+    if (!auth) {
+      toast({
+        title: "Error",
+        description: "Firebase is not configured",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsLoggingIn(true);
     try {
       await signInWithRedirect(auth, googleProvider);
@@ -125,6 +151,7 @@ function Router() {
   };
 
   const handleLogout = async () => {
+    if (!auth) return;
     try {
       await signOut(auth);
       toast({
@@ -325,6 +352,10 @@ function Router() {
       });
     }
   };
+
+  if (!firebaseConfigured) {
+    return <SetupPage />;
+  }
 
   if (loading) {
     return (
