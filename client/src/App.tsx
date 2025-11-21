@@ -49,6 +49,7 @@ function Router() {
   const [loading, setLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -334,6 +335,7 @@ function Router() {
   };
 
   const handleCreateInvoice = async (data: any) => {
+    setIsCreatingInvoice(true);
     try {
       const client = clients.find((c) => c.id === data.clientId);
       const doctor = doctors.find((d) => d.id === data.doctorId);
@@ -346,11 +348,14 @@ function Router() {
       toast({ title: "Success", description: "Invoice created successfully" });
       setLocation("/invoices");
     } catch (error: any) {
+      console.error("Error creating invoice:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create invoice",
         variant: "destructive",
       });
+    } finally {
+      setIsCreatingInvoice(false);
     }
   };
 
@@ -443,6 +448,7 @@ function Router() {
                   medicines={medicines}
                   onSubmit={handleCreateInvoice}
                   onCancel={() => setLocation("/invoices")}
+                  isSubmitting={isCreatingInvoice}
                   data-testid="page-create-invoice"
                 />
               </Route>

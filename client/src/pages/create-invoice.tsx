@@ -78,7 +78,7 @@ export default function CreateInvoicePage({
   });
 
   const [selectedMedicineId, setSelectedMedicineId] = useState("");
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState("1");
 
   const watchedItems = form.watch("items");
   
@@ -94,13 +94,14 @@ export default function CreateInvoicePage({
   };
 
   const handleAddMedicine = () => {
-    if (selectedMedicineId && quantity > 0) {
+    const qty = parseInt(quantity) || 1;
+    if (selectedMedicineId && qty > 0) {
       append({
         medicineId: selectedMedicineId,
-        quantity: quantity,
+        quantity: qty,
       });
       setSelectedMedicineId("");
-      setQuantity(1);
+      setQuantity("1");
     }
   };
 
@@ -243,7 +244,7 @@ export default function CreateInvoicePage({
                         type="number"
                         min="1"
                         value={quantity}
-                        onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                        onChange={(e) => setQuantity(e.target.value || "1")}
                         placeholder="Qty"
                         data-testid="input-quantity"
                       />
