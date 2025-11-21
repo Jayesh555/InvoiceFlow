@@ -436,19 +436,22 @@ function Router() {
                   onDelete={handleDeleteMedicine}
                 />
               </Route>
-              <Route path="/invoices">
+              <Route path="/invoices/create">
+                <CreateInvoicePage
+                  clients={clients}
+                  doctors={doctors}
+                  medicines={medicines}
+                  onSubmit={handleCreateInvoice}
+                  onCancel={() => setLocation("/invoices")}
+                  data-testid="page-create-invoice"
+                />
+              </Route>
+              <Route path="/invoices/:id">
                 {selectedInvoice ? (
                   <ViewInvoicePage
                     invoice={selectedInvoice}
                     onBack={() => setSelectedInvoice(null)}
-                  />
-                ) : location === "/invoices/create" ? (
-                  <CreateInvoicePage
-                    clients={clients}
-                    doctors={doctors}
-                    medicines={medicines}
-                    onSubmit={handleCreateInvoice}
-                    onCancel={() => setLocation("/invoices")}
+                    data-testid="page-view-invoice"
                   />
                 ) : (
                   <InvoicesPage
@@ -458,6 +461,15 @@ function Router() {
                     onView={(invoice) => setSelectedInvoice(invoice)}
                   />
                 )}
+              </Route>
+              <Route path="/invoices">
+                <InvoicesPage
+                  invoices={invoices}
+                  isLoading={dataLoading}
+                  onCreateNew={() => setLocation("/invoices/create")}
+                  onView={(invoice) => setSelectedInvoice(invoice)}
+                  data-testid="page-invoices"
+                />
               </Route>
               <Route component={NotFound} />
             </Switch>
