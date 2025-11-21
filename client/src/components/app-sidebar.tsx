@@ -68,7 +68,7 @@ export function AppSidebar({ onLogout, userEmail }: AppSidebarProps) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-lg font-semibold px-2 py-4">
-            Invoice Generator
+            Bafana Medical
           </SidebarGroupLabel>
           <Separator className="mb-2" />
           <SidebarGroupContent>
@@ -94,7 +94,7 @@ export function AppSidebar({ onLogout, userEmail }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <SidebarFooter className="p-4">
         <div className="space-y-2">
           {userEmail && (

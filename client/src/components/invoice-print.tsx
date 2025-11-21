@@ -24,23 +24,47 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
         </style>
 
         <div className="space-y-6">
-          {/* Header */}
-          <div className="text-center border-b-2 border-black pb-6">
-            <h1 className="text-3xl font-bold mb-2">MEDICAL INVOICE</h1>
-            <p className="text-sm text-gray-600">Professional Healthcare Services</p>
-          </div>
-
-          {/* Invoice Info */}
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-600">Invoice Number</p>
-              <p className="text-xl font-bold font-mono">{invoice.invoiceNumber}</p>
+          {/* Header with Medical Info and Invoice Details */}
+          <div className="grid grid-cols-2 gap-8">
+            {/* Left Side - Medical Information */}
+            <div className="border-r-2 border-black pr-6">
+              <h2 className="text-xl font-bold mb-4">Medical Pharmacy</h2>
+              <div className="space-y-2 text-sm">
+                <div>
+                  <p className="font-semibold">Address:</p>
+                  <p className="text-gray-700">123 Medical Plaza, Healthcare Street</p>
+                </div>
+                <div>
+                  <p className="font-semibold">Mobile:</p>
+                  <p className="text-gray-700">+91 98765 43210</p>
+                </div>
+                <div className="mt-3 pt-3 border-t border-gray-300">
+                  <p className="text-xs font-semibold text-gray-600 mb-2">License Numbers:</p>
+                  <div className="space-y-1 text-xs">
+                    <p><span className="font-semibold">License 1:</span> LIC/2024/001</p>
+                    <p><span className="font-semibold">License 2:</span> LIC/2024/002</p>
+                    <p><span className="font-semibold">License 3:</span> LIC/2024/003</p>
+                    <p><span className="font-semibold">License 4:</span> LIC/2024/004</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Date</p>
-              <p className="text-lg font-semibold">
-                {format(new Date(invoice.date), "MMMM dd, yyyy")}
-              </p>
+
+            {/* Right Side - Invoice Details */}
+            <div className="pl-6">
+              <h2 className="text-xl font-bold mb-4 text-center">MEDICAL INVOICE</h2>
+              <div className="space-y-4">
+                <div className="border-b-2 border-black pb-3">
+                  <p className="text-xs text-gray-600">INVOICE NUMBER</p>
+                  <p className="text-2xl font-bold font-mono">{invoice.invoiceNumber}</p>
+                </div>
+                <div className="border-b-2 border-black pb-3">
+                  <p className="text-xs text-gray-600">DATE</p>
+                  <p className="text-lg font-semibold">
+                    {format(new Date(invoice.date), "dd MMM yyyy")}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
