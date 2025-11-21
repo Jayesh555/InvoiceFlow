@@ -457,27 +457,30 @@ function Router() {
                 />
               </Route>
               <Route path="/invoices/:id">
-                {selectedInvoice ? (
-                  <ViewInvoicePage
-                    invoice={selectedInvoice}
-                    onBack={() => setSelectedInvoice(null)}
-                    data-testid="page-view-invoice"
-                  />
-                ) : (
-                  <InvoicesPage
-                    invoices={invoices}
-                    isLoading={dataLoading}
-                    onCreateNew={() => setLocation("/invoices/create")}
-                    onView={(invoice) => setSelectedInvoice(invoice)}
-                  />
-                )}
+                {(params) => {
+                  const invoice = invoices.find((inv) => inv.id === params.id);
+                  return invoice ? (
+                    <ViewInvoicePage
+                      invoice={invoice}
+                      onBack={() => setLocation("/invoices")}
+                      data-testid="page-view-invoice"
+                    />
+                  ) : (
+                    <InvoicesPage
+                      invoices={invoices}
+                      isLoading={dataLoading}
+                      onCreateNew={() => setLocation("/invoices/create")}
+                      onView={(invoice) => setLocation(`/invoices/${invoice.id}`)}
+                    />
+                  );
+                }}
               </Route>
               <Route path="/invoices">
                 <InvoicesPage
                   invoices={invoices}
                   isLoading={dataLoading}
                   onCreateNew={() => setLocation("/invoices/create")}
-                  onView={(invoice) => setSelectedInvoice(invoice)}
+                  onView={(invoice) => setLocation(`/invoices/${invoice.id}`)}
                   data-testid="page-invoices"
                 />
               </Route>
