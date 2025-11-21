@@ -39,6 +39,8 @@ const createInvoiceFormSchema = z.object({
   items: z.array(
     z.object({
       medicineId: z.string().min(1, "Medicine is required"),
+      batchNo: z.string().min(1, "Batch number is required"),
+      expiry: z.string().min(1, "Expiry date is required"),
       quantity: z.number().min(1, "Quantity must be at least 1"),
     })
   ).min(1, "At least one medicine is required"),
