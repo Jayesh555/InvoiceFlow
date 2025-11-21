@@ -16,7 +16,7 @@ export default function ViewInvoicePage({ invoice, onBack, onDelete }: ViewInvoi
   const componentRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `Invoice-${invoice.invoiceNumber}`,
   });
 
