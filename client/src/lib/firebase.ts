@@ -1,7 +1,7 @@
 // Firebase configuration and initialization
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, type FirebaseApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
 // Check if Firebase credentials are configured
 export const isFirebaseConfigured = () => {
@@ -12,13 +12,16 @@ export const isFirebaseConfigured = () => {
   );
 };
 
-let app: any = null;
-let authInstance: any = null;
-let dbInstance: any = null;
+let app: FirebaseApp | null = null;
+let authInstance: Auth | null = null;
+let dbInstance: Firestore | null = null;
+let googleProviderInstance: GoogleAuthProvider | null = null;
 
-try {
-  // Initialize Firebase only if credentials are available
-  if (isFirebaseConfigured()) {
+const initializeFirebase = () => {
+  if (app) return; // Already initialized
+  if (!isFirebaseConfigured()) return;
+
+  try {
     const firebaseConfig = {
       apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
       authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
@@ -30,19 +33,45 @@ try {
     app = initializeApp(firebaseConfig);
     authInstance = getAuth(app);
     dbInstance = getFirestore(app);
+    googleProviderInstance = new GoogleAuthProvider();
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
   }
-} catch (error) {
-  console.error("Firebase initialization error:", error);
-}
+};
 
-// Export functions to get instances
-export const getFirebaseApp = () => app;
-export const getFirebaseAuth = () => authInstance;
-export const getFirebaseDb = () => dbInstance;
+// Initialize on module load
+initializeFirebase();
+
+// Export functions to get instances dynamically
+export const getFirebaseApp = (): FirebaseApp | null => {
+  if (!app && isFirebaseConfigured()) {
+    initializeFirebase();
+  }
+  return app;
+};
+
+export const getFirebaseAuth = (): Auth | null => {
+  if (!authInstance && isFirebaseConfigured()) {
+    initializeFirebase();
+  }
+  return authInstance;
+};
+
+export const getFirebaseDb = (): Firestore | null => {
+  if (!dbInstance && isFirebaseConfigured()) {
+    initializeFirebase();
+  }
+  return dbInstance;
+};
+
+export const getGoogleProvider = (): GoogleAuthProvider | null => {
+  if (!googleProviderInstance && isFirebaseConfigured()) {
+    initializeFirebase();
+  }
+  return googleProviderInstance;
+};
 
 // For backwards compatibility
-export const auth = authInstance;
-export const db = dbInstance;
-
-// Configure Google Auth Provider (only if auth is available)
-export const googleProvider = authInstance ? new GoogleAuthProvider() : null;
+export const auth = getFirebaseAuth();
+export const db = getFirebaseDb();
+export const googleProvider = getGoogleProvider();

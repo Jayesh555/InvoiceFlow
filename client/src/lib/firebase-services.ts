@@ -11,7 +11,7 @@ import {
   Timestamp,
   type Unsubscribe,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { getFirebaseDb } from "./firebase";
 import type {
   Client,
   Doctor,
@@ -33,8 +33,16 @@ const COLLECTIONS = {
   INVOICES: "invoices",
 };
 
+// Helper to get db
+const getDb = () => {
+  const db = getFirebaseDb();
+  if (!db) throw new Error("Firebase Firestore not initialized");
+  return db;
+};
+
 // Clients
 export async function addClient(data: InsertClient): Promise<Client> {
+  const db = getDb();
   const docRef = await addDoc(collection(db, COLLECTIONS.CLIENTS), {
     ...data,
     createdAt: Timestamp.now().toMillis(),
@@ -47,11 +55,13 @@ export async function addClient(data: InsertClient): Promise<Client> {
 }
 
 export async function updateClient(id: string, data: InsertClient): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.CLIENTS, id);
   await updateDoc(docRef, data);
 }
 
 export async function deleteClient(id: string): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.CLIENTS, id);
   await deleteDoc(docRef);
 }
@@ -59,6 +69,7 @@ export async function deleteClient(id: string): Promise<void> {
 export function subscribeToClients(
   callback: (clients: Client[]) => void
 ): Unsubscribe {
+  const db = getDb();
   const q = query(collection(db, COLLECTIONS.CLIENTS), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const clients: Client[] = snapshot.docs.map((doc) => ({
@@ -71,6 +82,7 @@ export function subscribeToClients(
 
 // Doctors
 export async function addDoctor(data: InsertDoctor): Promise<Doctor> {
+  const db = getDb();
   const docRef = await addDoc(collection(db, COLLECTIONS.DOCTORS), {
     ...data,
     createdAt: Timestamp.now().toMillis(),
@@ -83,11 +95,13 @@ export async function addDoctor(data: InsertDoctor): Promise<Doctor> {
 }
 
 export async function updateDoctor(id: string, data: InsertDoctor): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.DOCTORS, id);
   await updateDoc(docRef, data);
 }
 
 export async function deleteDoctor(id: string): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.DOCTORS, id);
   await deleteDoc(docRef);
 }
@@ -95,6 +109,7 @@ export async function deleteDoctor(id: string): Promise<void> {
 export function subscribeToDoctors(
   callback: (doctors: Doctor[]) => void
 ): Unsubscribe {
+  const db = getDb();
   const q = query(collection(db, COLLECTIONS.DOCTORS), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const doctors: Doctor[] = snapshot.docs.map((doc) => ({
@@ -109,6 +124,7 @@ export function subscribeToDoctors(
 export async function addManufacturer(
   data: InsertManufacturer
 ): Promise<Manufacturer> {
+  const db = getDb();
   const docRef = await addDoc(collection(db, COLLECTIONS.MANUFACTURERS), {
     ...data,
     createdAt: Timestamp.now().toMillis(),
@@ -124,11 +140,13 @@ export async function updateManufacturer(
   id: string,
   data: InsertManufacturer
 ): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.MANUFACTURERS, id);
   await updateDoc(docRef, data);
 }
 
 export async function deleteManufacturer(id: string): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.MANUFACTURERS, id);
   await deleteDoc(docRef);
 }
@@ -136,6 +154,7 @@ export async function deleteManufacturer(id: string): Promise<void> {
 export function subscribeToManufacturers(
   callback: (manufacturers: Manufacturer[]) => void
 ): Unsubscribe {
+  const db = getDb();
   const q = query(
     collection(db, COLLECTIONS.MANUFACTURERS),
     orderBy("createdAt", "desc")
@@ -154,6 +173,7 @@ export async function addMedicine(
   data: InsertMedicine,
   manufacturerName: string
 ): Promise<Medicine> {
+  const db = getDb();
   const docRef = await addDoc(collection(db, COLLECTIONS.MEDICINES), {
     ...data,
     manufacturerName,
@@ -172,6 +192,7 @@ export async function updateMedicine(
   data: InsertMedicine,
   manufacturerName: string
 ): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.MEDICINES, id);
   await updateDoc(docRef, {
     ...data,
@@ -180,6 +201,7 @@ export async function updateMedicine(
 }
 
 export async function deleteMedicine(id: string): Promise<void> {
+  const db = getDb();
   const docRef = doc(db, COLLECTIONS.MEDICINES, id);
   await deleteDoc(docRef);
 }
@@ -187,6 +209,7 @@ export async function deleteMedicine(id: string): Promise<void> {
 export function subscribeToMedicines(
   callback: (medicines: Medicine[]) => void
 ): Unsubscribe {
+  const db = getDb();
   const q = query(collection(db, COLLECTIONS.MEDICINES), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const medicines: Medicine[] = snapshot.docs.map((doc) => ({
@@ -203,6 +226,7 @@ export async function addInvoice(
   clientData: Client,
   doctorData: Doctor
 ): Promise<Invoice> {
+  const db = getDb();
   const subtotal = data.items.reduce((sum: number, item: any) => sum + item.total, 0);
   
   const invoiceData = {
@@ -233,6 +257,7 @@ export async function addInvoice(
 export function subscribeToInvoices(
   callback: (invoices: Invoice[]) => void
 ): Unsubscribe {
+  const db = getDb();
   const q = query(collection(db, COLLECTIONS.INVOICES), orderBy("createdAt", "desc"));
   return onSnapshot(q, (snapshot) => {
     const invoices: Invoice[] = snapshot.docs.map((doc) => ({

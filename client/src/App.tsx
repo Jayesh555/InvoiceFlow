@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
+import { getFirebaseAuth, getGoogleProvider, isFirebaseConfigured } from "@/lib/firebase";
 import {
   signInWithRedirect,
   getRedirectResult,
@@ -128,7 +128,10 @@ function Router() {
   }, [user]);
 
   const handleLogin = async () => {
-    if (!auth) {
+    const authInstance = getFirebaseAuth();
+    const googleProviderInstance = getGoogleProvider();
+    
+    if (!authInstance || !googleProviderInstance) {
       toast({
         title: "Error",
         description: "Firebase is not configured",
@@ -138,7 +141,7 @@ function Router() {
     }
     setIsLoggingIn(true);
     try {
-      await signInWithRedirect(auth, googleProvider);
+      await signInWithRedirect(authInstance, googleProviderInstance);
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
