@@ -73,24 +73,44 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
 
             {/* Right Side - Invoice Details */}
             <div className="pl-6">
+              {/* <h2 className="text-xl font-bold mb-4 text-center">
+                MEDICAL INVOICE
+              </h2> */}
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 border-b-2 border-black pb-3">
-                  <div>
-                    <p className="text-xs text-gray-600">INVOICE NUMBER</p>
-                    <p className="text-lg font-bold font-mono">{invoice.invoiceNumber}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600">DATE</p>
-                    <p className="text-lg font-semibold">{format(new Date(invoice.date), "dd MMM yyyy")}</p>
-                  </div>
+                <div className="">
+                  <p className="text-xs text-black">
+                    INVOICE NO.: {invoice.invoiceNumber}
+                  </p>
+                  {/* <p className="text-s font-bold font-mono">
+                    {invoice.invoiceNumber}
+                  </p> */}
                 </div>
-                <div className="pt-2">
-                  <p className="text-xs font-semibold text-gray-600 mb-2">License Numbers:</p>
+                <div className="">
+                  <p className="text-xs text-black">
+                    DATE : {format(new Date(invoice.date), "dd MMM yyyy")}
+                  </p>
+                  {/* <p className="text-s font-semibold">
+                    {format(new Date(invoice.date), "dd MMM yyyy")}
+                  </p> */}
+                </div>
+                <div className="">
                   <div className="space-y-1 text-xs">
-                    <p><span className="font-semibold">License 1:</span> LIC/2024/001</p>
-                    <p><span className="font-semibold">License 2:</span> LIC/2024/002</p>
-                    <p><span className="font-semibold">License 3:</span> LIC/2024/003</p>
-                    <p><span className="font-semibold">License 4:</span> LIC/2024/004</p>
+                    <p>
+                      <span className="font-semibold">License 1:</span>{" "}
+                      LIC/2024/001
+                    </p>
+                    <p>
+                      <span className="font-semibold">License 2:</span>{" "}
+                      LIC/2024/002
+                    </p>
+                    <p>
+                      <span className="font-semibold">License 3:</span>{" "}
+                      LIC/2024/003
+                    </p>
+                    <p>
+                      <span className="font-semibold">License 4:</span>{" "}
+                      LIC/2024/004
+                    </p>
                   </div>
                 </div>
               </div>
