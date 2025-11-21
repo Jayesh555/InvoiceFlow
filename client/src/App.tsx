@@ -7,12 +7,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { getFirebaseAuth, getGoogleProvider, isFirebaseConfigured } from "@/lib/firebase";
+import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import {
-  signInWithRedirect,
-  getRedirectResult,
   signOut,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   type User as FirebaseUser,
 } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -71,28 +71,6 @@ function Router() {
     }
 
     try {
-      // Check for redirect result on mount
-      getRedirectResult(auth)
-        .then((result) => {
-          if (result?.user) {
-            toast({
-              title: "Welcome back!",
-              description: `Signed in as ${result.user.email}`,
-            });
-          }
-        })
-        .catch((error) => {
-          console.error("Sign in error:", error);
-          // Don't show error if it's a normal redirect result check
-          if (error?.code !== "auth/operation-not-supported-in-this-environment") {
-            toast({
-              title: "Sign in failed",
-              description: error.message,
-              variant: "destructive",
-            });
-          }
-        });
-
       // Listen for auth state changes
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setUser(user);
@@ -104,7 +82,7 @@ function Router() {
       console.error("Auth setup error:", error);
       setLoading(false);
     }
-  }, [toast, firebaseConfigured, auth]);
+  }, [firebaseConfigured, auth]);
 
   // Subscribe to Firebase collections when user is authenticated
   useEffect(() => {
@@ -127,11 +105,10 @@ function Router() {
     };
   }, [user]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (email: string, password: string, isSignUp: boolean = false) => {
     const authInstance = getFirebaseAuth();
-    const googleProviderInstance = getGoogleProvider();
     
-    if (!authInstance || !googleProviderInstance) {
+    if (!authInstance) {
       toast({
         title: "Error",
         description: "Firebase is not configured",
@@ -141,14 +118,35 @@ function Router() {
     }
     setIsLoggingIn(true);
     try {
-      await signInWithRedirect(authInstance, googleProviderInstance);
+      if (isSignUp) {
+        await createUserWithEmailAndPassword(authInstance, email, password);
+        toast({
+          title: "Account created",
+          description: "Welcome to Invoice Generator!",
+        });
+      } else {
+        await signInWithEmailAndPassword(authInstance, email, password);
+        toast({
+          title: "Welcome back!",
+          description: `Signed in as ${email}`,
+        });
+      }
     } catch (error: any) {
       console.error("Login error:", error);
-      toast({
-        title: "Login failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      let errorMessage = error.message;
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "Email already in use. Try signing in instead.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password must be at least 6 characters long.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Invalid email address.";
+      } else if (error.code === "auth/user-not-found") {
+        errorMessage = "No account found with this email.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Incorrect password.";
+      }
+      throw new Error(errorMessage);
+    } finally {
       setIsLoggingIn(false);
     }
   };
