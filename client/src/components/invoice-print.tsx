@@ -10,7 +10,10 @@ interface InvoicePrintProps {
 export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
   ({ invoice }, ref) => {
     return (
-      <div ref={ref} className="bg-white text-black p-12 max-w-4xl mx-auto w-full">
+      <div
+        ref={ref}
+        className="bg-white text-black p-12 max-w-4xl mx-auto w-full"
+      >
         <style type="text/css" media="print">
           {`
             @media print {
