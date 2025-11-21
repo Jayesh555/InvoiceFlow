@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, Trash2 } from "lucide-react";
 import type { Invoice } from "@shared/schema";
 import { InvoicePrint } from "@/components/invoice-print";
 import { useReactToPrint } from "react-to-print";
@@ -9,14 +9,22 @@ import { useReactToPrint } from "react-to-print";
 interface ViewInvoicePageProps {
   invoice: Invoice;
   onBack: () => void;
+  onDelete?: () => Promise<void>;
 }
 
-export default function ViewInvoicePage({ invoice, onBack }: ViewInvoicePageProps) {
+export default function ViewInvoicePage({ invoice, onBack, onDelete }: ViewInvoicePageProps) {
   const componentRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
+    documentTitle: `Invoice-${invoice.invoiceNumber}`,
   });
+
+  const handleDelete = async () => {
+    if (confirm(`Are you sure you want to delete invoice ${invoice.invoiceNumber}?`)) {
+      await onDelete?.();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -35,10 +43,18 @@ export default function ViewInvoicePage({ invoice, onBack }: ViewInvoicePageProp
             <p className="text-muted-foreground">Invoice #{invoice.invoiceNumber}</p>
           </div>
         </div>
-        <Button onClick={handlePrint} data-testid="button-print">
-          <Printer className="h-4 w-4 mr-2" />
-          Print Invoice
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handlePrint} data-testid="button-print">
+            <Printer className="h-4 w-4 mr-2" />
+            Print Invoice
+          </Button>
+          {onDelete && (
+            <Button onClick={handleDelete} variant="destructive" data-testid="button-delete-invoice">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card className="overflow-hidden">

@@ -98,10 +98,10 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
                     </td>
                     <td className="py-3 text-sm text-center">{item.quantity}</td>
                     <td className="py-3 text-sm text-right font-mono">
-                      ${item.price.toFixed(2)}
+                      ₹{item.price.toFixed(2)}
                     </td>
                     <td className="py-3 text-sm text-right font-mono">
-                      ${item.total.toFixed(2)}
+                      ₹{item.total.toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -114,11 +114,11 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
             <div className="w-64 space-y-2">
               <div className="flex justify-between py-2 border-t-2 border-black">
                 <span className="font-semibold">Subtotal:</span>
-                <span className="font-mono">${invoice.subtotal.toFixed(2)}</span>
+                <span className="font-mono">₹{invoice.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between py-2 text-lg font-bold border-t-2 border-black">
                 <span>TOTAL:</span>
-                <span className="font-mono">${invoice.total.toFixed(2)}</span>
+                <span className="font-mono">₹{invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

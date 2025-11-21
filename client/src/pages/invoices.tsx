@@ -90,7 +90,7 @@ export default function InvoicesPage({
                         <Badge variant="outline">{invoice.items.length} items</Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono font-semibold">
-                        ${invoice.total.toFixed(2)}
+                        ₹{invoice.total.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button

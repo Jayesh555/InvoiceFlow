@@ -271,6 +271,12 @@ export async function addInvoice(
   }
 }
 
+export async function deleteInvoice(id: string): Promise<void> {
+  const db = getDb();
+  const docRef = doc(db, COLLECTIONS.INVOICES, id);
+  await deleteDoc(docRef);
+}
+
 export function subscribeToInvoices(
   callback: (invoices: Invoice[]) => void
 ): Unsubscribe {

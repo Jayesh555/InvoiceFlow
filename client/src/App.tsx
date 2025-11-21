@@ -363,6 +363,21 @@ function Router() {
     }
   };
 
+  const handleDeleteInvoice = async (invoiceId: string) => {
+    try {
+      await firebaseServices.deleteInvoice(invoiceId);
+      toast({ title: "Success", description: "Invoice deleted successfully" });
+      setLocation("/invoices");
+    } catch (error: any) {
+      console.error("Error deleting invoice:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete invoice",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (!firebaseConfigured) {
     return <SetupPage />;
   }
@@ -463,6 +478,7 @@ function Router() {
                     <ViewInvoicePage
                       invoice={invoice}
                       onBack={() => setLocation("/invoices")}
+                      onDelete={() => handleDeleteInvoice(invoice.id)}
                       data-testid="page-view-invoice"
                     />
                   ) : (
