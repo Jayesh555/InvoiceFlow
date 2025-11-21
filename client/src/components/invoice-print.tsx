@@ -45,29 +45,6 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
                   {/* <p className="font-semibold">Mobile:</p> */}
                   <p className="text-gray-700">+91 9923454313</p>
                 </div>
-                {/* <div className="mt-3 pt-3 border-t border-gray-300">
-                  <p className="text-xs font-semibold text-gray-600 mb-2">
-                    License Numbers:
-                  </p>
-                  <div className="space-y-1 text-xs">
-                    <p>
-                      <span className="font-semibold">License 1:</span>{" "}
-                      LIC/2024/001
-                    </p>
-                    <p>
-                      <span className="font-semibold">License 2:</span>{" "}
-                      LIC/2024/002
-                    </p>
-                    <p>
-                      <span className="font-semibold">License 3:</span>{" "}
-                      LIC/2024/003
-                    </p>
-                    <p>
-                      <span className="font-semibold">License 4:</span>{" "}
-                      LIC/2024/004
-                    </p>
-                  </div>
-                </div> */}
               </div>
             </div>
 
@@ -76,7 +53,7 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
               {/* <h2 className="text-xl font-bold mb-4 text-center">
                 MEDICAL INVOICE
               </h2> */}
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div className="">
                   <p className="text-xs text-black">
                     INVOICE NO.: {invoice.invoiceNumber}
@@ -96,20 +73,20 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
                 <div className="">
                   <div className="space-y-1 text-xs">
                     <p>
-                      <span className="font-semibold">License 1:</span>{" "}
-                      LIC/2024/001
+                      <span className="font-semibold">License No.:</span>{" "}
+                      NK20/241784 NK21/241786
                     </p>
                     <p>
-                      <span className="font-semibold">License 2:</span>{" "}
-                      LIC/2024/002
+                      <span className="font-semibold">HOM LIC NO.:</span>{" "}
+                      20C/241785
                     </p>
                     <p>
-                      <span className="font-semibold">License 3:</span>{" "}
-                      LIC/2024/003
+                      <span className="font-semibold">GSTIN:</span>{" "}
+                      27AGVPB3069R1ZJ
                     </p>
                     <p>
-                      <span className="font-semibold">License 4:</span>{" "}
-                      LIC/2024/004
+                      <span className="font-semibold">FOOD LIC NO.:</span>{" "}
+                      21517133000053
                     </p>
                   </div>
                 </div>
@@ -126,7 +103,7 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
                 Patient Information
               </h3>
               <div className="space-y-1">
-                <p className="font-semibold text-lg">{invoice.clientName}</p>
+                <p className="font-semibold text-m">{invoice.clientName}</p>
                 <p className="text-sm">{invoice.clientAddress}</p>
                 {/* <p className="text-sm">Mobile: {invoice.clientMobile}</p>
                 <p className="text-sm">Contact: {invoice.clientContact}</p> */}
@@ -137,9 +114,7 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
                 Doctor Information
               </h3>
               <div className="space-y-1">
-                <p className="font-semibold text-lg">
-                  Dr. {invoice.doctorName}
-                </p>
+                <p className="font-semibold text-m">Dr. {invoice.doctorName}</p>
                 <p className="text-sm">{invoice.doctorSpecialization}</p>
               </div>
             </div>
@@ -149,9 +124,9 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
 
           {/* Items Table */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 uppercase mb-3">
+            {/* <h3 className="text-sm font-semibold text-gray-600 uppercase mb-3">
               Prescribed Medicines
-            </h3>
+            </h3> */}
             <table className="w-full border-collapse text-xs">
               <thead>
                 <tr className="border-b-2 border-black">
@@ -211,14 +186,15 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
           </div>
 
           {/* Totals */}
-          <div className="flex justify-end">
+          <div className="flex justify-between items-start mt-6">
+            <div className="text-sm font-semibold pt-2">Prop./Auth. Sign -</div>
             <div className="w-64 space-y-2">
-              <div className="flex justify-between py-2 border-t-2 border-black">
+              {/* <div className="flex justify-between py-2 border-t-2 border-black">
                 <span className="font-semibold">Subtotal:</span>
                 <span className="font-mono">
                   ₹{invoice.subtotal.toFixed(2)}
                 </span>
-              </div>
+              </div> */}
               <div className="flex justify-between py-2 text-lg font-bold border-t-2 border-black">
                 <span>TOTAL:</span>
                 <span className="font-mono">₹{invoice.total.toFixed(2)}</span>
@@ -228,8 +204,10 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
 
           {/* Footer */}
           <div className="mt-12 pt-6 border-t border-gray-300 text-center text-xs text-gray-600">
-            <p>Thank you for your business</p>
-            <p className="mt-1">This is a computer-generated invoice</p>
+            <p>COUNSULT DOCTORE BEFORE USE</p>
+            <p className="mt-1">
+              COMPOSITION TAXABLE PERSON NOT ELIGIBLE TO COLLECT TAX ON SUPPLIES
+            </p>
           </div>
         </div>
       </div>
