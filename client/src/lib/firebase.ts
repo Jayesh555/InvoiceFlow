@@ -3,6 +3,17 @@ import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
+// Debug: print Vite env vars to the browser console so we can confirm values
+// (will appear in the browser devtools console during development)
+if (typeof window !== "undefined" && import.meta && import.meta.env) {
+  // eslint-disable-next-line no-console
+  console.log("VITE env check:", {
+    API_KEY: import.meta.env.VITE_FIREBASE_API_KEY,
+    PROJECT_ID: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    APP_ID: import.meta.env.VITE_FIREBASE_APP_ID,
+  });
+}
+
 // Check if Firebase credentials are configured
 export const isFirebaseConfigured = () => {
   return !!(
