@@ -36,7 +36,7 @@ export default function LoginPage({ onLogin, isLoading }: LoginPageProps) {
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <FileText className="h-8 w-8 text-primary" />
           </div>
-          <CardTitle className="text-3xl">Invoice Generator</CardTitle>
+          <CardTitle className="text-3xl">Bafana Medical - Billing System</CardTitle>
           <CardDescription className="text-base">
             Professional medical billing system for managing invoices
           </CardDescription>
