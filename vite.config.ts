@@ -21,14 +21,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+      "@": path.resolve(import.meta.dirname, "src"),  // Changed from "client/src"
+      "@shared": path.resolve(import.meta.dirname, "../shared"),  // Go up one level
+      "@assets": path.resolve(import.meta.dirname, "../attached_assets"),  // Go up one level
     },
   },
-  // Remove the root line completely
   build: {
-    outDir: "dist",  // Simple relative path
+    outDir: "dist",
     emptyOutDir: true,
   },
   server: {
