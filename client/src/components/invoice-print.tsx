@@ -3,12 +3,90 @@ import { format } from "date-fns";
 import type { Invoice } from "@shared/schema";
 import { Separator } from "@/components/ui/separator";
 
+// Helper: convert numbers to words (INR-friendly)
+function numberToWords(amount: number): string {
+  const ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+  function twoDigits(n: number) {
+    if (n < 20) return ones[n];
+    const t = Math.floor(n / 10);
+    const o = n % 10;
+    return `${tens[t]}${o ? " " + ones[o] : ""}`.trim();
+  }
+
+  function threeDigits(n: number) {
+    const h = Math.floor(n / 100);
+    const rem = n % 100;
+    let str = "";
+    if (h) str += `${ones[h]} Hundred`;
+    if (rem) str += (str ? " " : "") + twoDigits(rem);
+    return str.trim();
+  }
+
+  function inWords(n: number) {
+    if (n === 0) return "Zero";
+    const parts: string[] = [];
+    const crore = Math.floor(n / 10000000);
+    if (crore) {
+      parts.push(`${inWords(crore)} Crore`);
+      n = n % 10000000;
+    }
+    const lakh = Math.floor(n / 100000);
+    if (lakh) {
+      parts.push(`${inWords(lakh)} Lakh`);
+      n = n % 100000;
+    }
+    const thousand = Math.floor(n / 1000);
+    if (thousand) {
+      parts.push(`${inWords(thousand)} Thousand`);
+      n = n % 1000;
+    }
+    if (n) {
+      parts.push(threeDigits(n));
+    }
+    return parts.join(" ").trim();
+  }
+
+  const rupees = Math.floor(Math.abs(amount));
+  const paise = Math.round((Math.abs(amount) - rupees) * 100);
+
+  let result = "";
+  if (rupees > 0) result += `${inWords(rupees)} Rupees`;
+  if (paise > 0) result += `${result ? " and " : ""}${inWords(paise)} Paise`;
+  if (!result) result = "Zero Rupees";
+  result += " Only";
+  // Preserve negative sign if needed
+  return amount < 0 ? `Minus ${result}` : result;
+}
 interface InvoicePrintProps {
   invoice: Invoice;
 }
 
 export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
   ({ invoice }, ref) => {
+    const amountInWords = numberToWords(invoice.total || 0);
     return (
       <div
         ref={ref}
@@ -190,26 +268,28 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
 
           {/* Totals */}
           <div className="flex justify-between items-start mt-6">
-            <div className="text-sm font-semibold pt-2">Prop./Auth. Sign -
-              <div className="">
-                {/* Place a signature image file at `client/public/signature.png` */}
+            <div className="text-sm font-semibold pt-2">
+              <div className="flex items-center gap-4">
+                <span>Prop./Auth. Sign-</span>
                 <img
                   src="/signature.jpeg"
                   alt="Signature"
-                  className="h-12 w-32 object-contain mx-auto"
+                  className="h-12 w-32 object-contain"
                 />
-             </div>
+                 <div className="pr-4 pl-4 text-sm">{amountInWords}</div>
+              </div>
+             
             </div>
-            <div className="w-64 space-y-2">
+            <div className="w-62 space-y-2">
               {/* <div className="flex justify-between py-2 border-t-2 border-black">
                 <span className="font-semibold">Subtotal:</span>
                 <span className="font-mono">
                   ₹{invoice.subtotal.toFixed(2)}
                 </span>
               </div> */}
-              <div className="flex justify-between py-2 text-lg font-bold border-t-2 border-black">
+              <div className="flex justify-between py-2 text-md font-bold border-t-2 border-black">
                 <span>TOTAL:</span>
-                <span className="font-mono">₹{invoice.total.toFixed(2)}</span>
+                <span className="font-mono pl-10">₹{invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

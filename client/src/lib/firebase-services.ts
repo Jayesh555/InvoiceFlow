@@ -262,7 +262,9 @@ export async function addInvoice(
       const invoiceDocRef = doc(collection(db, COLLECTIONS.INVOICES));
       const invoiceRecord = {
         invoiceNumber,
-        date: Timestamp.now().toMillis(),
+        date: typeof data.date === "number" && !isNaN(data.date)
+          ? data.date
+          : Timestamp.now().toMillis(),
         clientId: data.clientId,
         clientName: clientData.patientName,
         clientContact: clientData.contact,

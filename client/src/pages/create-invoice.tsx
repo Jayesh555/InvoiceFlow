@@ -34,6 +34,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 const createInvoiceFormSchema = z.object({
+  date: z.string().min(1, "Date is required"),
   clientId: z.string().min(1, "Client is required"),
   doctorId: z.string().min(1, "Doctor is required"),
   items: z.array(
@@ -68,6 +69,7 @@ export default function CreateInvoicePage({
   const form = useForm<CreateInvoiceForm>({
     resolver: zodResolver(createInvoiceFormSchema),
     defaultValues: {
+      date: new Date().toISOString().slice(0, 10),
       clientId: "",
       doctorId: "",
       items: [],
@@ -130,6 +132,7 @@ export default function CreateInvoicePage({
     });
 
     const invoiceData = {
+      date: new Date(data.date).getTime(),
       clientId: data.clientId,
       doctorId: data.doctorId,
       items: invoiceItems,
@@ -167,6 +170,23 @@ export default function CreateInvoicePage({
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="date"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Invoice Date</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="date"
+                              value={field.value}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="clientId"
