@@ -8,6 +8,7 @@ import {
   query,
   orderBy,
   onSnapshot,
+  runTransaction,
   Timestamp,
   type Unsubscribe,
 } from "firebase/firestore";
@@ -50,6 +51,8 @@ export async function addClient(data: InsertClient): Promise<Client> {
   return {
     id: docRef.id,
     ...data,
+    contact: (data as any).contact ?? "",
+    mobileNo: (data as any).mobileNo ?? "",
     createdAt: Timestamp.now().toMillis(),
   };
 }
@@ -230,37 +233,59 @@ export async function addInvoice(
   if (!db) {
     throw new Error("Firebase Firestore is not initialized. Please check your Firebase configuration.");
   }
-  
   const subtotal = data.items.reduce((sum: number, item: any) => sum + item.total, 0);
-  
-  const invoiceData = {
-    invoiceNumber: `INV-${Date.now().toString().slice(-8)}`,
-    date: Timestamp.now().toMillis(),
-    clientId: data.clientId,
-    clientName: clientData.patientName,
-    clientContact: clientData.contact,
-    clientAddress: clientData.address,
-    clientMobile: clientData.mobileNo,
-    doctorId: data.doctorId,
-    doctorName: doctorData.name,
-    doctorSpecialization: doctorData.specialization,
-    items: data.items,
-    subtotal,
-    total: subtotal,
-    createdAt: Timestamp.now().toMillis(),
-  };
 
-  console.log("Attempting to save invoice to Firestore:", invoiceData);
+  // Use a transaction on a `counters/invoices` doc to generate a unique, incremental
+  // invoice number in the format BAF-000001. This avoids collisions when multiple
+  // clients create invoices concurrently.
   try {
-    const docRef = await addDoc(collection(db, COLLECTIONS.INVOICES), invoiceData);
-    console.log("Invoice saved successfully with ID:", docRef.id);
-    
-    return {
-      id: docRef.id,
-      ...invoiceData,
-    };
+    const result = await runTransaction(db, async (tx) => {
+      const counterRef = doc(db, "counters", "invoices");
+      let nextNumber = 1;
+
+      try {
+        const counterSnap = await tx.get(counterRef as any);
+        if (counterSnap.exists()) {
+          const dataVal: any = counterSnap.data();
+          nextNumber = (dataVal.lastNumber || 0) + 1;
+          tx.update(counterRef as any, { lastNumber: nextNumber });
+        } else {
+          tx.set(counterRef as any, { lastNumber: nextNumber });
+        }
+      } catch (err) {
+        // If reading the counter fails, still attempt to set it to 1
+        tx.set(counterRef as any, { lastNumber: nextNumber });
+      }
+
+      const invoiceNumber = `BAF-${String(nextNumber).padStart(6, "0")}`;
+
+      const invoiceDocRef = doc(collection(db, COLLECTIONS.INVOICES));
+      const invoiceRecord = {
+        invoiceNumber,
+        date: Timestamp.now().toMillis(),
+        clientId: data.clientId,
+        clientName: clientData.patientName,
+        clientContact: clientData.contact,
+        clientAddress: clientData.address,
+        clientMobile: clientData.mobileNo,
+        doctorId: data.doctorId,
+        doctorName: doctorData.name,
+        doctorSpecialization: doctorData.specialization,
+        items: data.items,
+        subtotal,
+        total: subtotal,
+        createdAt: Timestamp.now().toMillis(),
+      };
+
+      tx.set(invoiceDocRef as any, invoiceRecord);
+
+      return { id: invoiceDocRef.id, ...invoiceRecord } as Invoice;
+    });
+
+    console.log("Invoice saved successfully with ID:", result.id);
+    return result;
   } catch (error: any) {
-    console.error("Firestore write error:", error);
+    console.error("Firestore transaction/write error:", error);
     if (error.code === "permission-denied") {
       throw new Error(
         "Permission denied! Your Firebase Firestore security rules don't allow writes. " +

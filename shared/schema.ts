@@ -12,9 +12,9 @@ export interface Client {
 
 export const insertClientSchema = z.object({
   patientName: z.string().min(1, "Patient name is required"),
-  contact: z.string().min(1, "Contact is required"),
+  // contact: z.string().min(1, "Contact is required"),
   address: z.string().min(1, "Address is required"),
-  mobileNo: z.string().min(10, "Valid mobile number is required"),
+  // mobileNo: z.string().min(10, "Valid mobile number is required"),
 });
 
 export type InsertClient = z.infer<typeof insertClientSchema>;
@@ -54,7 +54,7 @@ export const insertManufacturerSchema = z.object({
 export type InsertManufacturer = z.infer<typeof insertManufacturerSchema>;
 
 // Medicine Categories
-export const medicineCategories = ["TAB", "SYP", "OINT", "CAP"] as const;
+export const medicineCategories = ["TAB", "SYP", "OINT", "CAP", "SUPPO", "INJ", "VAIL", "AMP", "POWD", "GEL", "SPRAY", "LOTION", "LIQ", "DRP", "CREAM", "OIL", "FACEWASH", "RESP", "ROTACAP", "SYRINGE", "SOAP"] as const;
 export type MedicineCategory = typeof medicineCategories[number];
 
 // Medicine Schema

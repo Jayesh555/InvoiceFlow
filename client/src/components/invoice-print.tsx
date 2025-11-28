@@ -27,6 +27,9 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
         </style>
 
         <div className="space-y-6">
+         <div className="pt-3 border-t border-gray-300 text-center text-xs text-gray-600">
+            <p>SUBJECT TO MALEGAON JURISDICTION</p>
+          </div>
           {/* Header with Medical Info and Invoice Details */}
           <div className="grid grid-cols-2 gap-8">
             {/* Left Side - Medical Information */}
@@ -187,7 +190,16 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
 
           {/* Totals */}
           <div className="flex justify-between items-start mt-6">
-            <div className="text-sm font-semibold pt-2">Prop./Auth. Sign -</div>
+            <div className="text-sm font-semibold pt-2">Prop./Auth. Sign -
+              <div className="">
+                {/* Place a signature image file at `client/public/signature.png` */}
+                <img
+                  src="/signature.jpeg"
+                  alt="Signature"
+                  className="h-12 w-32 object-contain mx-auto"
+                />
+             </div>
+            </div>
             <div className="w-64 space-y-2">
               {/* <div className="flex justify-between py-2 border-t-2 border-black">
                 <span className="font-semibold">Subtotal:</span>

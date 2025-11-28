@@ -196,7 +196,7 @@ export default function MedicinesPage({
                       </TableCell>
                       <TableCell>{medicine.manufacturerName}</TableCell>
                       <TableCell className="text-right font-mono">
-                        ${medicine.price.toFixed(2)}
+                        ₹{medicine.price.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -290,7 +290,7 @@ export default function MedicinesPage({
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price ($)</FormLabel>
+                      <FormLabel>Price (₹)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"

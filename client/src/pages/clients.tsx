@@ -68,9 +68,9 @@ export default function ClientsPage({
     resolver: zodResolver(insertClientSchema),
     defaultValues: {
       patientName: "",
-      contact: "",
+      // contact: "",
       address: "",
-      mobileNo: "",
+      // mobileNo: "",
     },
   });
 
@@ -79,17 +79,17 @@ export default function ClientsPage({
       setEditingClient(client);
       form.reset({
         patientName: client.patientName,
-        contact: client.contact,
+        // contact: client.contact,
         address: client.address,
-        mobileNo: client.mobileNo,
+        // mobileNo: client.mobileNo,
       });
     } else {
       setEditingClient(null);
       form.reset({
         patientName: "",
-        contact: "",
+        // contact: "",
         address: "",
-        mobileNo: "",
+        // mobileNo: "",
       });
     }
     setDialogOpen(true);
@@ -166,8 +166,8 @@ export default function ClientsPage({
                 <TableHeader>
                   <TableRow>
                     <TableHead>Patient Name</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Mobile No</TableHead>
+                    {/* <TableHead>Contact</TableHead> */}
+                    {/* <TableHead>Mobile No</TableHead> */}
                     <TableHead>Address</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -176,8 +176,8 @@ export default function ClientsPage({
                   {clients.map((client) => (
                     <TableRow key={client.id} data-testid={`row-client-${client.id}`}>
                       <TableCell className="font-medium">{client.patientName}</TableCell>
-                      <TableCell>{client.contact}</TableCell>
-                      <TableCell className="font-mono text-sm">{client.mobileNo}</TableCell>
+                      {/* <TableCell>{client.contact}</TableCell> */}
+                      {/* <TableCell className="font-mono text-sm">{client.mobileNo}</TableCell> */}
                       <TableCell className="max-w-xs truncate">{client.address}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -236,7 +236,7 @@ export default function ClientsPage({
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="contact"
                   render={({ field }) => (
@@ -252,8 +252,8 @@ export default function ClientsPage({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
-                <FormField
+                /> */}
+                {/* <FormField
                   control={form.control}
                   name="mobileNo"
                   render={({ field }) => (
@@ -269,7 +269,7 @@ export default function ClientsPage({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
               <FormField
                 control={form.control}
