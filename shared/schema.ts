@@ -109,9 +109,9 @@ export interface Invoice {
   date: number;
   clientId: string;
   clientName?: string;
-  clientContact?: string;
+  // clientContact?: string;
   clientAddress?: string;
-  clientMobile?: string;
+  // clientMobile?: string;
   doctorId: string;
   doctorName?: string;
   doctorSpecialization?: string;
