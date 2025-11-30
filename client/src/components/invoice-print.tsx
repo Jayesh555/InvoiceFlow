@@ -181,7 +181,7 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
           <div className="grid grid-cols-2 gap-8">
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">
-                Patient Information
+                Patient Name
               </h3>
               <div className="space-y-1">
                 <p className="font-semibold text-m">{invoice.clientName}</p>
@@ -192,7 +192,7 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase mb-2">
-                Doctor Information
+                Doctor Name
               </h3>
               <div className="space-y-1">
                 <p className="font-semibold text-m">Dr. {invoice.doctorName}</p>
@@ -211,11 +211,11 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
             <table className="w-full border-collapse text-xs">
               <thead>
                 <tr className="border-b-2 border-black">
-                  <th className="text-left py-2 text-xs font-semibold">
-                    Product Name
-                  </th>
                   <th className="text-center py-2 text-xs font-semibold">
                     Category
+                  </th>
+                  <th className="text-left py-2 text-xs font-semibold">
+                    Product Name
                   </th>
                   <th className="text-center py-2 text-xs font-semibold">
                     Manufacturer
@@ -238,10 +238,10 @@ export const InvoicePrint = forwardRef<HTMLDivElement, InvoicePrintProps>(
               <tbody>
                 {invoice.items.map((item: any, index) => (
                   <tr key={index} className="border-b border-gray-200">
-                    <td className="py-2 text-xs">{item.medicineName}</td>
                     <td className="py-2 text-xs text-center">
                       {item.category}
                     </td>
+                    <td className="py-2 text-xs">{item.medicineName}</td>
                     <td className="py-2 text-xs text-center">
                       {item.manufacturer || "-"}
                     </td>
