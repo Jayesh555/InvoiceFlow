@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Users, UserRound, Pill } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FileText, Users, UserRound, Pill, RotateCcw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 interface DashboardStats {
   invoices: number;
@@ -12,9 +14,25 @@ interface DashboardStats {
 interface DashboardPageProps {
   stats?: DashboardStats;
   isLoading?: boolean;
+  onResetInvoiceCounter?: () => Promise<void>;
 }
 
-export default function DashboardPage({ stats, isLoading }: DashboardPageProps) {
+export default function DashboardPage({ stats, isLoading, onResetInvoiceCounter }: DashboardPageProps) {
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetCounter = async () => {
+    if (onResetInvoiceCounter && confirm("Are you sure you want to reset the invoice counter to BAF-000001? This cannot be undone.")) {
+      setIsResetting(true);
+      try {
+        await onResetInvoiceCounter();
+        alert("Invoice counter reset successfully. Next invoice will be BAF-000001.");
+      } catch (error) {
+        alert("Failed to reset invoice counter: " + (error as any).message);
+      } finally {
+        setIsResetting(false);
+      }
+    }
+  };
   const metrics = [
     {
       title: "Total Invoices",
@@ -102,7 +120,7 @@ export default function DashboardPage({ stats, isLoading }: DashboardPageProps) 
                 </span>
               )}
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-3 border-b">
               <span className="text-sm text-muted-foreground">
                 Total Invoices Generated
               </span>
@@ -112,6 +130,20 @@ export default function DashboardPage({ stats, isLoading }: DashboardPageProps) 
                 <span className="font-semibold">{stats?.invoices || 0}</span>
               )}
             </div>
+            {onResetInvoiceCounter && (
+              <div className="pt-2">
+                <Button
+                  onClick={handleResetCounter}
+                  disabled={isResetting}
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  {isResetting ? "Resetting..." : "Reset Invoice Counter"}
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

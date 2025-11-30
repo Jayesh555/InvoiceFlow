@@ -421,7 +421,11 @@ function Router() {
           <main className="flex-1 overflow-auto p-6">
             <Switch>
               <Route path="/">
-                <DashboardPage stats={stats} isLoading={dataLoading} />
+                <DashboardPage 
+                  stats={stats} 
+                  isLoading={dataLoading}
+                  onResetInvoiceCounter={firebaseServices.resetInvoiceCounter}
+                />
               </Route>
               <Route path="/clients">
                 <ClientsPage

@@ -317,3 +317,10 @@ export function subscribeToInvoices(
     callback(invoices);
   });
 }
+
+// Reset invoice counter to 0 (next invoice will be BAF-000001)
+export async function resetInvoiceCounter(): Promise<void> {
+  const db = getDb();
+  const counterRef = doc(db, "counters", "invoices");
+  await updateDoc(counterRef, { lastNumber: 0 });
+}
