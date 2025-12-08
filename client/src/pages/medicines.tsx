@@ -78,6 +78,7 @@ export default function MedicinesPage({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<Medicine | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const form = useForm<InsertMedicine>({
     resolver: zodResolver(insertMedicineSchema),
@@ -85,7 +86,10 @@ export default function MedicinesPage({
       name: "",
       category: "TAB",
       manufacturerId: "",
-      price: 0,
+      price: 0.01,
+      batchNo: "",
+      expiry: "",
+      stock: 0,
     },
   });
 
@@ -97,6 +101,9 @@ export default function MedicinesPage({
         category: medicine.category,
         manufacturerId: medicine.manufacturerId,
         price: medicine.price,
+        batchNo: medicine.batchNo,
+        expiry: medicine.expiry,
+        stock: medicine.stock ?? 0,
       });
     } else {
       setEditingMedicine(null);
@@ -104,7 +111,10 @@ export default function MedicinesPage({
         name: "",
         category: "TAB",
         manufacturerId: "",
-        price: 0,
+        price: 0.01,
+        batchNo: "",
+        expiry: "",
+        stock: 0,
       });
     }
     setDialogOpen(true);
@@ -117,6 +127,7 @@ export default function MedicinesPage({
   };
 
   const handleSubmit = async (data: InsertMedicine) => {
+    console.log("Submitting medicine:", data);
     setIsSubmitting(true);
     try {
       if (editingMedicine) {
@@ -143,6 +154,11 @@ export default function MedicinesPage({
     }
   };
 
+  // Filter medicines by search term
+  const filteredMedicines = medicines.filter((medicine) =>
+    medicine.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -150,10 +166,20 @@ export default function MedicinesPage({
           <h1 className="text-3xl font-semibold mb-2">Medicines</h1>
           <p className="text-muted-foreground">Manage medicine inventory</p>
         </div>
-        <Button onClick={() => handleOpenDialog()} data-testid="button-add-medicine">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Medicine
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => handleOpenDialog()} data-testid="button-add-medicine">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Medicine
+          </Button>
+          <Input
+            type="text"
+            placeholder="Search medicines..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
+            data-testid="input-search-medicine"
+          />
+        </div>
       </div>
 
       <Card>
@@ -167,7 +193,7 @@ export default function MedicinesPage({
                 <Skeleton key={i} className="h-12 w-full" />
               ))}
             </div>
-          ) : medicines.length === 0 ? (
+          ) : filteredMedicines.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">No medicines found</p>
               <Button onClick={() => handleOpenDialog()} variant="outline">
@@ -188,7 +214,7 @@ export default function MedicinesPage({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {medicines.map((medicine) => (
+                  {filteredMedicines.map((medicine) => (
                     <TableRow key={medicine.id} data-testid={`row-medicine-${medicine.id}`}>
                       <TableCell className="font-medium">{medicine.name}</TableCell>
                       <TableCell>
@@ -334,6 +360,35 @@ export default function MedicinesPage({
                   </FormItem>
                 )}
               />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="batchNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Batch Number</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Batch no." data-testid="input-medicine-batchNo" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="expiry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Expiry (MM/YY)</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="MM/YY" data-testid="input-medicine-expiry" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+              </div>
               <DialogFooter>
                 <Button
                   type="button"

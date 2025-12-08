@@ -54,10 +54,12 @@ export const insertManufacturerSchema = z.object({
 export type InsertManufacturer = z.infer<typeof insertManufacturerSchema>;
 
 // Medicine Categories
-export const medicineCategories = ["TAB", "SYP", "OINT", "CAP", "SUPPO", "INJ", "VAIL", "AMP", "POWD", "GEL", "SPRAY", "LOTION", "LIQ", "DRP", "CREAM", "OIL", "FACEWASH", "RESP", "ROTACAP", "SYRINGE", "SOAP"] as const;
+export const medicineCategories = ["TAB", "SYP", "OINT", "CAP", "SUPPO", "INJ", "VAIL", "AMP", "POWD", "GEL", "SPRAY", "LOTION", "LIQ", "DRP", "CREAM", "OIL", "FACEWASH", "RESP", "ROTACAP", "SYRINGE", "SOAP", "BOLUS"] as const;
 export type MedicineCategory = typeof medicineCategories[number];
 
 // Medicine Schema
+
+
 export interface Medicine {
   id: string;
   name: string;
@@ -65,14 +67,22 @@ export interface Medicine {
   manufacturerId: string;
   manufacturerName?: string; // For display purposes
   price: number;
+  batchNo: string;
+  expiry: string; // MM/YY format
+  stock: number;
   createdAt: number;
 }
+
+
 
 export const insertMedicineSchema = z.object({
   name: z.string().min(1, "Medicine name is required"),
   category: z.enum(medicineCategories, { required_error: "Category is required" }),
   manufacturerId: z.string().min(1, "Manufacturer is required"),
   price: z.number().min(0.01, "Price must be greater than 0"),
+  batchNo: z.string().min(1, "Batch number is required"),
+  expiry: z.string().min(1, "Expiry date is required"),
+  stock: z.number().min(0, "Stock must be 0 or greater"),
 });
 
 export type InsertMedicine = z.infer<typeof insertMedicineSchema>;

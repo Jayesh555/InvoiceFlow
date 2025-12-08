@@ -86,6 +86,14 @@ export default function CreateInvoicePage({
   const [batchNo, setBatchNo] = useState("");
   const [expiry, setExpiry] = useState("");
 
+  // Auto-fill batchNo and expiry when medicine changes
+  const handleMedicineChange = (id: string) => {
+    setSelectedMedicineId(id);
+    const med = medicines.find((m) => m.id === id);
+    setBatchNo(med?.batchNo || "");
+    setExpiry(med?.expiry || "");
+  };
+
   const watchedItems = form.watch("items");
   
   const calculateTotal = () => {
@@ -256,7 +264,7 @@ export default function CreateInvoicePage({
                     <div className="lg:col-span-2">
                       <Select
                         value={selectedMedicineId}
-                        onValueChange={setSelectedMedicineId}
+                        onValueChange={handleMedicineChange}
                       >
                         <SelectTrigger data-testid="select-medicine">
                           <SelectValue placeholder="Select medicine" />
@@ -275,7 +283,7 @@ export default function CreateInvoicePage({
                         type="text"
                         placeholder="Batch No."
                         value={batchNo}
-                        onChange={(e) => setBatchNo(e.target.value)}
+                        readOnly
                         data-testid="input-batch-no"
                       />
                     </div>
@@ -284,14 +292,7 @@ export default function CreateInvoicePage({
                         type="text"
                         placeholder="Exp. (MM/YY)"
                         value={expiry}
-                        onChange={(e) => {
-                          let val = e.target.value.replace(/\D/g, "");
-                          if (val.length >= 2) {
-                            val = val.slice(0, 2) + "/" + val.slice(2, 4);
-                          }
-                          setExpiry(val);
-                        }}
-                        maxLength="5"
+                        readOnly
                         data-testid="input-expiry"
                       />
                     </div>
